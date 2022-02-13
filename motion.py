@@ -94,7 +94,10 @@ def visualize(M, source, path):
     fig = plt.figure()
 
     if N == 2:
-        pass
+        plt.scatter(M[:,0], M[:,1], color='g', marker='x')
+        plt.scatter([s[0] for s in path], [s[1] for s in path], [s[2] for s in path], color='orange')
+        plt.xlabel('x')
+        plt.ylabel('y')
 
     elif N == 3:
         ax = fig.add_subplot(projection='3d')
@@ -106,7 +109,6 @@ def visualize(M, source, path):
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_zlabel('z')
-
 
     else:
         del fig
