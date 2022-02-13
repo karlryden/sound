@@ -109,7 +109,6 @@ def visualize(M, S, path):
         ax = fig.add_subplot(projection='3d')
         ax.scatter(M[:,0], M[:,1], M[:,2], color='g', marker='x')
         ax.plot([source[0] for source in S], [source[1] for source in S], [source[2] for source in S], color='blue')
-        # ax.scatter(source[0], source[1], source[2], color='b', linewidths=5)
         ax.plot([p[0] for p in path], [p[1] for p in path], [p[2] for p in path], 'r--')
 
         # ax.legend(['Microphones', 'True source', 'Estimated source'])
@@ -130,5 +129,5 @@ if __name__ == '__main__':
     alpha = 1e-5
     beta = 1e-5
 
-    M, source, path = simulate(N, n, dt, alpha, beta, num=100)
+    M, source, path = simulate(N, n, dt, alpha, beta, num=1000)
     visualize(M, source, path)

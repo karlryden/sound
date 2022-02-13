@@ -41,12 +41,13 @@ def F(s, M, T):
 def localize(M, T):
     _, N = M.shape
     s = np.zeros(N)
-    while (not any(s)) or (np.max(np.abs(s)) > 0.5):
-        # print('Minimizing')
+    while not any(s):
+        print('Minimizing')
         # x0 = source + np.random.normal(0, 0.1, N)
         x0 = np.random.normal(0, 0.125, N)
+        # x0 = np.zeros(N)
         res = root(F, x0, args=(M, T), method='lm')
-        s = res.x
+        s = np.array([np.sign(eks)*min(0.5, abs(eks)) for eks in res.x])
 
     return s
 
