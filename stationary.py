@@ -6,12 +6,18 @@ import math
 
 nu = 340
 
-def setup(N, n):
+def measure(M, source):
+    mag = np.linalg.norm(M - source, axis=1)
+    T = mag/nu
+
+    return T
+
+def setup(N, n, beta):
     M = np.random.rand(n, N) - 0.5*np.ones((n, N))
     source = np.random.normal(0, 0.125, N)
     mag = np.linalg.norm(M - source, axis=1)
-    e = np.array([np.random.normal(0, a*10e-5) for a in mag])
-    T = mag/nu + e
+    e = np.array([np.random.normal(0, a*beta) for a in mag])
+    T = measure(M, source) + e
 
     return M, source, T
 
@@ -77,10 +83,10 @@ def visualize(M, source, S):
         )
         ax.add_patch(ell)
 
+        plt.scatter([s[0] for s in S], [s[1] for s in S], color='orange')
+        plt.scatter(est[0], est[1], color='r', linewidths=3)
         plt.scatter(M[:,0], M[:,1], color='g', marker='x', linewidths=0.5)
         plt.scatter(source[0], source[1], color='b', linewidths=5)
-        plt.scatter(est[0], est[1], color='r', linewidths=3)
-        plt.scatter([s[0] for s in S], [s[1] for s in S], color='orange')
 
         for j in range(2):
             l = w[j]
@@ -96,9 +102,9 @@ def visualize(M, source, S):
     elif N == 3:
         ax = fig.add_subplot(projection='3d')
         ax.scatter(M[:,0], M[:,1], M[:,2], color='g', marker='x')
-        ax.scatter(source[0], source[1], source[2], color='b', linewidths=5)
-        ax.scatter(est[0], est[1], est[2], color='r', linewidths=3)
         ax.scatter([s[0] for s in S], [s[1] for s in S], [s[2] for s in S], color='orange')
+        ax.scatter(est[0], est[1], est[2], color='r', linewidths=3)
+        ax.scatter(source[0], source[1], source[2], color='b', linewidths=5)
 
         # ax.legend(['Microphones', 'True source', 'Estimated source'])
         ax.set_xlabel('x')
@@ -130,12 +136,13 @@ def minscape_surf(M, source, S, T):
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
     ax.scatter(M[:,0], M[:,1], [0 for _ in range(n)], color='g', marker='x')
-    ax.scatter(source[0], source[1], 0, color='b', linewidths=5)
     ax.scatter([s[0] for s in S], [s[1] for s in S], [0 for _ in S], color='orange')
+    ax.scatter(est[0], est[1], 0, color='r', linewidths=3)
+    ax.scatter(source[0], source[1], 0, color='b', linewidths=5)
     ax.plot_wireframe(X, Y, Z, rcount=9, ccount=9)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    ax.set_zlabel('|f(x, y)|^2')
+    ax.set_zlabel('|F(x, y)|^2')
 
     plt.show()
 
@@ -156,9 +163,9 @@ def minscape_heatmap(M, source, S, T):
     fig = plt.figure()
     plt.imshow(Z, extent=(-0.5, 0.5, -0.5, 0.5), cmap='binary', alpha=0.5)
     plt.scatter(M[:,0], M[:,1], color='g', marker='x', linewidths=0.5)
-    plt.scatter(source[0], source[1], color='b', linewidths=5)
-    plt.scatter(est[0], est[1], color='r', linewidths=3)
     plt.scatter([s[0] for s in S], [s[1] for s in S], color='orange')
+    plt.scatter(est[0], est[1], color='r', linewidths=3)
+    plt.scatter(source[0], source[1], color='b', linewidths=5)
     plt.xlabel('x')
     plt.ylabel('y')
 
@@ -168,7 +175,8 @@ def minscape_heatmap(M, source, S, T):
 if __name__ == '__main__':
     N = 2
     n = 4
-    M, source, T = setup(N, n)
+    beta = 1e-5
+    M, source, T = setup(N, n, beta)
 
     S = estimate(M, source, 100)
     print(f'Estimated source: \n {np.mean(S, axis=0)}')
