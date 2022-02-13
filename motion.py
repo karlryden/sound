@@ -65,10 +65,10 @@ def step(xold, Pold, M, T, dt, alpha, beta):
     y = z - localize(M, T)
 
     Pmid = np.dot(A, np.dot(Pold, A.T)) + Q
-    S = np.dot(H, np.dot(Pmid, H.T)) + R*np.eye(2*N)
+    S = np.dot(H, np.dot(Pmid, H.T)) + R*np.eye(len(np.dot(H, np.dot(Pmid, H.T))))    # ?????? R är skalär
     K = np.dot(Pmid, np.dot(H.T, np.linalg.inv(S)))
     # xnew = xold + np.dot(K, y)
-    xnew = xold + np.dot(K, np.block([y, v]))
+    xnew = xold + np.dot(K, np.block([y, np.zeros(len(K) - N)]))
     Pnew = np.dot(np.eye(2*N) - np.dot(K, H), Pmid)
 
     return xnew, Pnew
@@ -95,7 +95,7 @@ def visualize(M, source, path):
 
     if N == 2:
         plt.scatter(M[:,0], M[:,1], color='g', marker='x')
-        plt.scatter([s[0] for s in path], [s[1] for s in path], [s[2] for s in path], color='orange')
+        plt.scatter([s[0] for s in path], [s[1] for s in path], color='orange')
         plt.xlabel('x')
         plt.ylabel('y')
 
