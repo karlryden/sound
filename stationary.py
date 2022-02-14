@@ -42,7 +42,7 @@ def localize(M, T):
     _, N = M.shape
     s = np.zeros(N)
     while not any(s):
-        print('Minimizing')
+        # print('Minimizing')
         # x0 = source + np.random.normal(0, 0.1, N)
         x0 = np.random.normal(0, 0.125, N)
         # x0 = np.zeros(N)
