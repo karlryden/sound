@@ -15,8 +15,8 @@ def setup(N, n, sigma):
     return M, source, x0, P0
 
 
-def step(xold, Pold, M, T, dt, alpha, sigma):
-    n, N = M.shape
+def step(xold, Pold, M, z, dt, alpha, sigma):
+    _, N = M.shape
     A = np.block([[np.eye(N),     dt*np.eye(N)],
                   [np.zeros((N, N)), np.eye(N)]])
 
@@ -30,10 +30,9 @@ def step(xold, Pold, M, T, dt, alpha, sigma):
 
     R = sigma**2*np.eye(N)
 
-    a = np.random.normal(0, alpha, N)
-
-    xmid = np.dot(A, xold) + np.dot(B, a)
-    z = localize(M, T) + np.random.normal(0, sigma, N)
+    xmid = np.dot(A, xold)
+    # z = localize(M, T) + np.random.normal(0, sigma, N)
+    # z = s + np.random.normal(0, sigma, N)
     y = z - np.dot(C, xmid)
 
     Pmid = np.dot(A, np.dot(Pold, A.T)) + Q
@@ -53,14 +52,16 @@ def simulate(N, n, dt, alpha, sigma, num=10):
 
     for i in range(num):
         S[i,:] = s
+
+        T = measure(M, s) + np.random.normal(0, sigma, n)
+        z = localize(M, T) #+ np.random.normal(0, sigma, N)
+        x, P = step(x, P, M, z, dt, alpha, sigma)
+
         path[i,:] = x[:N]
 
-        T = measure(M, s)# + np.random.normal(0, beta, n)
-        x, P = step(x, P, M, T, dt, alpha, sigma)
-
-        a = np.random.normal(0, 1, N)
+        a = np.random.normal(0, alpha, N)
         v += dt*a
-        s += dt*v
+        s += dt*v + dt**2/2*a
 
     return M, S, path
 
@@ -96,10 +97,10 @@ def visualize(M, S, path):
 
 if __name__ == '__main__':
     N = 2
-    n = 3
+    n = 4
     dt = 1e-2
-    alpha = 1e-3    # Acceleration noise
-    sigma = 1e-5    # Measurement noise
+    alpha = 1e-1    # Acceleration noise
+    sigma = 1e-2    # Measurement noise
 
     M, source, path = simulate(N, n, dt, alpha, sigma, num=499)
     visualize(M, source, path)

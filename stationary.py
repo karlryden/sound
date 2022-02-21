@@ -6,8 +6,8 @@ import math
 
 nu = 340
 
-def measure(M, source):
-    mag = np.linalg.norm(M - source, axis=1)
+def measure(M, s):
+    mag = np.linalg.norm(M - s, axis=1)
     T = mag/nu
 
     return T
@@ -23,11 +23,11 @@ def setup(N, n, beta):
 
 
 def F(s, M, T):
-    n, _ = M.shape
+    m, _ = M.shape
     ret = []
 
-    for i in range(n):
-        for j in range(i + 1, n):
+    for i in range(m):
+        for j in range(i + 1, m):
             m_i = M[i,:]
             m_j = M[j,:]
             d_ij = nu*(T[j] - T[i])
@@ -44,9 +44,9 @@ def localize(M, T):
     while not any(s):
         # print('Minimizing')
         # x0 = source + np.random.normal(0, 0.1, N)
-        x0 = np.random.normal(0, 0.125, N)
+        s0 = np.random.normal(0, 0.125, N)
         # x0 = np.zeros(N)
-        res = root(F, x0, args=(M, T), method='lm')
+        res = root(F, s0, args=(M, T), method='lm')
         s = np.array([np.sign(eks)*min(0.5, abs(eks)) for eks in res.x])
 
     return s
