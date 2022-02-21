@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import math
 
-nu = 340
+nu = 343.2
 
 def measure(M, s):
     mag = np.linalg.norm(M - s, axis=1)
