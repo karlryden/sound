@@ -53,8 +53,8 @@ def simulate(N, n, dt, alpha, sigma, num=10):
     for i in range(num):
         S[i,:] = s
 
-        T = measure(M, s) + np.random.normal(0, sigma, n)
-        z = localize(M, T) #+ np.random.normal(0, sigma, N)
+        T = measure(M, s) #+ np.random.normal(0, sigma, n)
+        z = localize(M, T) + np.random.normal(0, sigma, N)
         x, P = step(x, P, M, z, dt, alpha, sigma)
 
         path[i,:] = x[:N]
@@ -96,11 +96,11 @@ def visualize(M, S, path):
     plt.show()
 
 if __name__ == '__main__':
-    N = 2
+    N = 3
     n = 4
     dt = 1e-2
     alpha = 1e-1    # Acceleration noise
     sigma = 1e-2    # Measurement noise
 
-    M, source, path = simulate(N, n, dt, alpha, sigma, num=499)
+    M, source, path = simulate(N, n, dt, alpha, sigma, num=449)
     visualize(M, source, path)
