@@ -28,7 +28,7 @@ times = read_csv('./data/times.csv', header=None).to_numpy()[0]
 
 sound_path = read_csv('./data/sound_path.csv', header=None).to_numpy()
 
-alpha = 1e-1
+alpha = 1e-2
 sigma = 1e-2
 
 t0 = 0
@@ -37,6 +37,8 @@ P = np.eye(6)*sigma**2
 
 S = []
 path = []
+
+thresh = 6
 for k, t in enumerate(times):
     if k % 1000 == 0:
         print(k)
@@ -48,7 +50,7 @@ for k, t in enumerate(times):
     # print(M_rel)
     # print(T_rel)
 
-    if len(T_rel) > 11: # Threshold for amount of active mics
+    if len(T_rel) >= thresh: # Threshold for amount of active mics
         s = sound_path[k,:]
         if len(s[s == s]) == 3:
             z = localize(M_rel, T_rel)
@@ -66,6 +68,10 @@ ax = fig.add_subplot(projection='3d')
 ax.scatter(M[:,0], M[:,1], M[:,2], color='green', marker='x')
 ax.plot([p[0] for p in path], [p[1] for p in path], [p[2] for p in path], 'r--')
 ax.plot([s[0] for s in S], [s[1] for s in S], [s[2] for s in S], color='blue')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.set_title(f'Path tracking with at least {thresh} active mics out of 12, alpha={alpha}, sigma={sigma}.')
 plt.show()
 
 if __name__ == '__main__':
