@@ -12,11 +12,11 @@ def measure(M, s):
 
     return T
 
-def setup(N, n, beta):
+def setup(N, n, sigma):
     M = np.random.rand(n, N) - 0.5*np.ones((n, N))
     source = np.random.normal(0, 0.125, N)
     mag = np.linalg.norm(M - source, axis=1)
-    e = np.array([np.random.normal(0, a*beta) for a in mag])
+    e = np.array([np.random.normal(0, a*sigma) for a in mag])
     T = measure(M, source) + e
 
     return M, source, T
@@ -147,43 +147,15 @@ def minscape_surf(M, source, S, T):
 
     plt.show()
 
-def minscape_heatmap(M, source, S, T):
-    L = 99
-    I = np.linspace(-0.5, 0.5, L)
-
-    est = np.mean(S, axis=0)
-
-    Z = np.ndarray((L, L))
-
-    for i in range(L):
-        for j in range(L):
-            x = I[j]
-            y = I[i]
-            Z[i,j] = np.linalg.norm(F(np.array([x, y]), M, T))**2
-
-    fig = plt.figure()
-    plt.imshow(Z, extent=(-0.5, 0.5, -0.5, 0.5), cmap='binary', alpha=0.5)
-    plt.scatter(M[:,0], M[:,1], color='g', marker='x', linewidths=0.5)
-    plt.scatter([s[0] for s in S], [s[1] for s in S], color='orange')
-    plt.scatter(est[0], est[1], color='r', linewidths=3)
-    plt.scatter(source[0], source[1], color='b', linewidths=5)
-    plt.xlabel('x')
-    plt.ylabel('y')
-
-    plt.show()
-
-
 if __name__ == '__main__':
     N = 2
-    n = 4
-    beta = 1e-5
-    M, source, T = setup(N, n, beta)
+    n = 3
+    sigma = 1e-5
+    M, source, T = setup(N, n, sigma)
 
     S = estimate(M, source, 100)
     print(f'Estimated source: \n {np.mean(S, axis=0)}')
     print(f'Covariance matrix: \n {np.cov(S.T)}')
 
     minscape_surf(M, source, S, T)
-    minscape_heatmap(M, source, S, T)
-
     visualize(M, source, S)

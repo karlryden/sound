@@ -37,8 +37,9 @@ P = np.eye(6)*sigma**2
 
 S = []
 path = []
+# unfiltered = []
 
-thresh = 6
+thresh = 12
 for k, t in enumerate(times):
     if k % 1000 == 0:
         print(k)
@@ -58,16 +59,19 @@ for k, t in enumerate(times):
         
             S.append(s)
             path.append(x[:3])
+            # unfiltered.append(z)
 
     t0 = t
 
 path = np.array(path)
+# unfiltered = np.array(unfiltered)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 ax.scatter(M[:,0], M[:,1], M[:,2], color='green', marker='x')
-ax.plot([p[0] for p in path], [p[1] for p in path], [p[2] for p in path], 'r--')
 ax.plot([s[0] for s in S], [s[1] for s in S], [s[2] for s in S], color='blue')
+ax.plot([p[0] for p in path], [p[1] for p in path], [p[2] for p in path], 'r--')
+# ax.plot([u[0] for u in unfiltered], [u[1] for u in unfiltered], [u[2] for u in unfiltered], 'r--')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')

@@ -96,7 +96,7 @@ def visualize(M, S, path):
     plt.show()
 
 if __name__ == '__main__':
-    N = 3
+    N = 2
     n = 4
     dt = 1e-2
     alpha = 1e-1    # Acceleration noise
